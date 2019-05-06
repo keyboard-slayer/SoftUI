@@ -14,7 +14,7 @@ class Launcher:
         sys.path.insert(0, os.environ["APP"])
 
         self.apps  = scan_for_apps()
-        self.icons = get_app_icons(self.apps) 
+        self.icons = get_app_icons(self.apps)
         self.colliders = []
 
         self.screen_res = screen_res
@@ -32,16 +32,20 @@ class Launcher:
                 y += 90
 
             #if y > self.screen_res[1] - 90:
-            # TODO   
+            # TODO
 
     def get_surface(self) -> pygame.Surface:
         self.draw()
-        return self.surface 
+        return self.surface
+
+    def mainloop(self):
+        if self.appObject is not None:
+            self.appObject.mainloop()
 
     def handler(self, cursor: Tuple[int, int]):
         if self.appObject is None:
             for icon in self.colliders:
                 if icon.collidepoint(cursor):
-                    print(self.icons[self.colliders.index(icon)].get_app_path())
-
-    
+                    appName = self.icons[self.colliders.index(icon)].get_app_name()
+                    exec("import apps.{0}.main as {0}".format(appName))
+                    self.appObject = eval(f"{appName}.callObject()")

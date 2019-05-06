@@ -2,15 +2,16 @@
 # -*- coding: utf-8 -*-
 
 import os
-import pygame 
+import pygame
 
 from pygame.locals import *
-from ui.navbar import Navbar 
+from ui.navbar import Navbar
 from ui.launcher import Launcher
 
 # ================= Config =================
 RESOLUTION  = (480, 800) # Resolution de l'écran
 SOFTUI_PATH = os.getcwd()
+os.environ["dev"] = "dev"
 # ==========================================
 
 def call_launcher(screen: pygame.Surface, launcher: Launcher, navbar: Navbar):
@@ -32,6 +33,7 @@ if __name__ == "__main__":
     pygame.display.update()
 
     while True:
+        launcher.mainloop()
         for event in pygame.event.get():
             if event.type == QUIT:
                 exit()

@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import os
-from template.AppTemplate import *
 
-class Shutdown(AppTemplate):
+class Shutdown:
     def __init__(self):
-        AppTemplate.__init__(self)
+        self = self
 
     def mainloop(self):
         if os.environ["dev"] == "dev":
