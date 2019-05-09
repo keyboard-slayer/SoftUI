@@ -28,11 +28,10 @@ if __name__ == "__main__":
     launcher = Launcher(RESOLUTION)
     navbar = Navbar(RESOLUTION)
 
-    call_launcher(display, launcher, navbar)
-
-    pygame.display.update()
-
     while True:
+        call_launcher(display, launcher, navbar)
+        pygame.display.update()
+        
         launcher.mainloop()
         for event in pygame.event.get():
             if event.type == QUIT:

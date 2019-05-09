@@ -35,7 +35,11 @@ class Launcher:
             # TODO
 
     def get_surface(self) -> pygame.Surface:
-        self.draw()
+        if self.appObject is not None:
+            self.surface.blit(self.appObject.get_surface(), (0, 0))
+        else:
+            self.draw()
+
         return self.surface
 
     def mainloop(self):
@@ -48,4 +52,4 @@ class Launcher:
                 if icon.collidepoint(cursor):
                     appName = self.icons[self.colliders.index(icon)].get_app_name()
                     exec("import apps.{0}.main as {0}".format(appName))
-                    self.appObject = eval(f"{appName}.callObject()")
+                    self.appObject = eval(f"{appName}.callObject({self.screen_res})")
