@@ -14,9 +14,9 @@ SOFTUI_PATH = os.getcwd()
 os.environ["dev"] = "dev"
 # ==========================================
 
-def call_launcher(screen: pygame.Surface, launcher: Launcher, navbar: Navbar):
+def call_launcher(screen: pygame.Surface, launcher: Launcher, navbar: Navbar) -> pygame.Rect:
     display.blit(launcher.get_surface(), (0, 0))
-    display.blit(navbar.get_surface(), (0, RESOLUTION[1]-50))
+    return display.blit(navbar.get_surface(), (0, RESOLUTION[1]-50))
 
 if __name__ == "__main__":
     pygame.init()
@@ -29,12 +29,22 @@ if __name__ == "__main__":
     navbar = Navbar(RESOLUTION)
 
     while True:
-        call_launcher(display, launcher, navbar)
+        rect_home = call_launcher(display, launcher, navbar)
         pygame.display.update()
-        
-        launcher.mainloop()
+
+        rect = pygame.Rect(
+            navbar.get_rect().x + rect_home.x,
+            navbar.get_rect().y + rect_home.y,
+            navbar.get_rect().w,
+            navbar.get_rect().h
+        )
+
         for event in pygame.event.get():
+            launcher.mainloop(event)
             if event.type == QUIT:
                 exit()
             if event.type == MOUSEBUTTONDOWN and event.button == 1:
-                launcher.handler(event.pos)
+                if rect.collidepoint(event.pos):
+                    launcher.closeApp()
+                else:
+                    launcher.handler(event.pos)

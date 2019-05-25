@@ -17,3 +17,6 @@ class Navbar:
 
     def get_surface(self) -> pygame.Surface:
         return self.surface
+
+    def get_rect(self) -> pygame.Rect:
+        return self.home_btn_rect

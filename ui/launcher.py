@@ -19,6 +19,7 @@ class Launcher:
 
         self.screen_res = screen_res
         self.appObject = None
+        self.appName = ""
 
     def draw(self):
         x = 20
@@ -42,7 +43,12 @@ class Launcher:
 
         return self.surface
 
-    def mainloop(self):
+    def closeApp(self):
+        if self.appObject is not None:
+            self.appObject = None
+
+
+    def mainloop(self, event):
         if self.appObject is not None:
             self.appObject.mainloop()
 
@@ -50,6 +56,6 @@ class Launcher:
         if self.appObject is None:
             for icon in self.colliders:
                 if icon.collidepoint(cursor):
-                    appName = self.icons[self.colliders.index(icon)].get_app_name()
-                    exec("import apps.{0}.main as {0}".format(appName))
-                    self.appObject = eval(f"{appName}.callObject({self.screen_res})")
+                    self.appName = self.icons[self.colliders.index(icon)].get_app_name()
+                    exec("import apps.{0}.main as {0}".format(self.appName))
+                    self.appObject = eval(f"{self.appName}.callObject({self.screen_res})")
