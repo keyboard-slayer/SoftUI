@@ -30,7 +30,7 @@ class Py64:
 
         self.surface = pygame.Surface(size)
         self.smallSurface = pygame.Surface((size[0] * 0.85, size[1] * 0.85))
-        self.font = pygame.font.Font(os.path.join(os.getcwd(), "apps/py64/font/c64.ttf"), 15)
+        self.font = pygame.font.Font(os.path.join(os.environ["APP"], "py64/font/c64.ttf"), 15)
         self.blinkRect = None
         self.lineRect = None
 
@@ -58,6 +58,9 @@ class Py64:
         self.smallSurface.blit(ready, (10, 80))
         self.blinkRect = pygame.Rect((10, 20*len(self.visualLine)+100, 12, 20))
         self.lineRect = self.smallSurface.blit(line, (10, 20*len(self.visualLine)+100))
+
+        if not self.smallSurface.get_rect().colliderect(self.lineRect):
+            self.visualLine = self.visualLine[:-2]
 
         self.smallSurface.blit(title, (self.surface.get_width() // 10, 10))
         self.smallSurface.blit(mem, (10, 40))
@@ -89,7 +92,7 @@ class Py64:
             need_ready = True
 
             keyname = pygame.key.name(event.key)
-            special_key = ["\"", "\'", "(", ")", "=", ":", "[", "]"]
+            special_key = ["\"", "\'", "(", ")", "=", ":", "[", "]", ";", "+"]
 
             if keyname == "space":
                 self.currentLine += " "
@@ -99,7 +102,7 @@ class Py64:
                 self.blinkRect = pygame.Rect((10, 100, 12, 20))
                 self.drawBlink()
 
-            if keyname[1:-1] in digits:
+            if keyname[1:-1] in digits or keyname == "[.]":
                 self.currentLine += keyname[1:-1]
 
             if keyname == "return":
@@ -112,12 +115,29 @@ class Py64:
 
                 elif self.currentLine == "list":
                     self.visualLine.append("")
-                    for line in self.codeLines.values():
-                        self.visualLine.append(f"> {line}")
+                    for nbr, line in self.codeLines.items():
+                        self.visualLine.append(f"{nbr} {line}")
+
+                elif self.currentLine.split(" ")[0] == "del":
+                    os.system("rm -rf {}".format(os.path.join(os.environ["APP"], "py64/scripts/{}.py".format(self.currentLine.split(" ")[1]))))
 
                 elif self.currentLine == "clear":
                     self.visualLine = []
                     need_ready = False
+
+                elif self.currentLine == "listing":
+                    for script in os.listdir(os.path.join(os.environ["APP"], "py64/scripts")):
+                        self.visualLine.append(".".join(script.split(".")[:-1]))
+
+                elif self.currentLine.split(" ")[0] == "save":
+                    with open(os.path.join(os.environ["APP"], f"py64/scripts/{self.currentLine.split(' ')[1]}.py"), "w") as script:
+                        for line in self.codeLines.values():
+                            script.write(f"{line}\n")
+
+                elif self.currentLine.split(" ")[0] == "load":
+                    with open(os.path.join(os.environ["APP"], f"py64/scripts/{self.currentLine.split(' ')[1]}.py"), "r") as script:
+                        for nbr, line in enumerate(script.readlines()):
+                            self.codeLines[10+(nbr*10)] = line[:-1]
 
                 elif self.currentLine == "run":
                     with open("tmp.py", "w") as script:
@@ -134,6 +154,7 @@ class Py64:
                 else:
                     self.visualLine.append(self.execute_python(self.currentLine))
                     self.currentLine = ""
+
 
                 self.currentLine = ""
 
