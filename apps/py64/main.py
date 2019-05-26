@@ -19,8 +19,6 @@ from string import (
     digits
 )
 
-
-
 class Py64:
     def __init__(self, size: Tuple[int, int]):
         self.size = size
@@ -39,7 +37,10 @@ class Py64:
         self.mem = "UNDEFINED"
 
     def execute_python(self, command: str) -> str:
-        return subprocess.check_output(["python", "-c", command]).decode()[:-1]
+        try:
+            return subprocess.check_output(["python", "-c", command]).decode()[:-1]
+        except subprocess.CalledProcessError:
+            return "?SYNTAX ERROR"
 
 
     def draw(self):
@@ -60,7 +61,7 @@ class Py64:
         self.lineRect = self.smallSurface.blit(line, (10, 20*len(self.visualLine)+100))
 
         if not self.smallSurface.get_rect().colliderect(self.lineRect):
-            self.visualLine = self.visualLine[:-2]
+            self.visualLine = self.visualLine[2:]
 
         self.smallSurface.blit(title, (self.surface.get_width() // 10, 10))
         self.smallSurface.blit(mem, (10, 40))
@@ -93,6 +94,7 @@ class Py64:
 
             keyname = pygame.key.name(event.key)
             special_key = ["\"", "\'", "(", ")", "=", ":", "[", "]", ";", "+"]
+            key_nbr = ["world 64", "&","world 73", "\"", "\'", "(", "world 7", "world 72", "!", "world 71", "world 64"]
 
             if keyname == "space":
                 self.currentLine += " "
@@ -165,11 +167,16 @@ class Py64:
             if keyname in special_key:
                 self.currentLine += keyname
 
-            if keyname in ascii_lowercase:
+
+            if keyname == ";" and pygame.key.get_mods() & pygame.KMOD_SHIFT:
+                self.currentLine += "."
+
+
+            if keyname in ascii_lowercase and pygame.key.get_mods() & pygame.KMOD_SHIFT:
+                self.currentLine += keyname.upper()
+
+            elif keyname in ascii_lowercase:
                 self.currentLine += keyname
-
-
-
 
     def get_surface(self) -> pygame.Surface:
         self.draw()
