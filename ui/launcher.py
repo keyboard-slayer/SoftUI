@@ -22,6 +22,7 @@ class Launcher:
         self.appName = ""
 
     def draw(self):
+        self.surface.fill((0, 0, 0))
         x = 20
         y = 20
         for icon in self.icons:
@@ -50,7 +51,7 @@ class Launcher:
 
     def mainloop(self, event):
         if self.appObject is not None:
-            self.appObject.mainloop()
+            self.appObject.mainloop(event)
 
     def handler(self, cursor: Tuple[int, int]):
         if self.appObject is None:
