@@ -164,12 +164,13 @@ class Py64:
                     self.visualLine.append("")
                     self.visualLine.append("READY")
 
-            if keyname in special_key:
+            if keyname == ";" and pygame.key.get_mods() & pygame.KMOD_SHIFT:
+                self.currentLine += "."
+
+            elif keyname in special_key:
                 self.currentLine += keyname
 
 
-            if keyname == ";" and pygame.key.get_mods() & pygame.KMOD_SHIFT:
-                self.currentLine += "."
 
 
             if keyname in ascii_lowercase and pygame.key.get_mods() & pygame.KMOD_SHIFT:
